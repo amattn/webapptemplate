@@ -1,0 +1,49 @@
+*webapptemplate
+
+# Compiled Object files, Static and Dynamic libs (Shared Objects)
+
+*.o
+*.a
+*.so
+
+
+
+# Folders
+
+_obj
+_test
+
+# Architecture specific extensions/prefixes
+*.[568vq]
+[568vq].out
+
+*.cgo1.go
+*.cgo2.c
+_cgo_defun.c
+_cgo_gotypes.go
+_cgo_export.*
+
+_testmain.go
+
+*.exe
+*.test
+*.prof
+
+
+# gox tool output
+
+*_darwin_386
+*_darwin_amd64
+*_linux_386
+*_linux_amd64
+*_linux_arm
+*_windows_386
+*_windows_amd64
+*_freebsd_386
+*_openbsd_386
+*_openbsd_amd64
+*_openbsd_arm
+*_netbsd_386
+*_netbsd_amd64
+*_netbsd_arm
+*_plan9_386
