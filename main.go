@@ -3,7 +3,9 @@ package main
 import (
 	"flag"
 	"fmt"
+	"html"
 	"log"
+	"net/http"
 	"os"
 	"runtime"
 	"time"
@@ -43,5 +45,24 @@ func main() {
 
 	// do stuff
 
-	fmt.Println("hello world")
+	http.HandleFunc("/bar", func(w http.ResponseWriter, r *http.Request) {
+		fmt.Fprintf(w, "Hello, %q", html.EscapeString(r.URL.Path))
+	})
+	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
+		if r.URL.Path != "/" {
+			custom404Handler(w, r)
+			return
+		}
+
+		fmt.Fprintf(w, "root")
+	})
+
+	host_and_port := ":8080"
+	log.Println("Starting HTTP server at", host_and_port)
+	log.Fatal(http.ListenAndServe(host_and_port, nil))
+}
+
+func custom404Handler(w http.ResponseWriter, r *http.Request) {
+	w.WriteHeader(http.StatusNotFound)
+	fmt.Fprintf(w, "404 Not Found, %v", html.EscapeString(r.URL.Path))
 }
