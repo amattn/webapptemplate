@@ -43,23 +43,27 @@ func main() {
 		os.Exit(0)
 	}
 
-	// do stuff
+	host_and_port := ":8080"
+	log.Println("Starting HTTP server at", "\nhttp://"+host_and_port)
+	log.Fatal(http.ListenAndServe(host_and_port, getHandler()))
+}
 
-	http.HandleFunc("/bar", func(w http.ResponseWriter, r *http.Request) {
+func getHandler() *http.ServeMux {
+	serveMux := http.NewServeMux()
+	// setup our handler
+	serveMux.HandleFunc("/bar", func(w http.ResponseWriter, r *http.Request) {
 		fmt.Fprintf(w, "Hello, %q", html.EscapeString(r.URL.Path))
 	})
-	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
+	serveMux.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
 		if r.URL.Path != "/" {
 			custom404Handler(w, r)
 			return
 		}
 
-		fmt.Fprintf(w, "root")
+		fmt.Fprintf(w, "root!")
 	})
 
-	host_and_port := ":8080"
-	log.Println("Starting HTTP server at", host_and_port)
-	log.Fatal(http.ListenAndServe(host_and_port, nil))
+	return serveMux
 }
 
 func custom404Handler(w http.ResponseWriter, r *http.Request) {
