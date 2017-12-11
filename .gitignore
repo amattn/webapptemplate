@@ -31,6 +31,12 @@ _testmain.go
 *.test
 *.prof
 
+# misc
+
+*.ignore
+tmp
+temp
+.DS_Store
 
 # gox tool output
 

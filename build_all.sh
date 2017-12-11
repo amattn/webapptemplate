@@ -3,12 +3,18 @@
 # if one of our commands returns an error, stop execution of this script
 set -o errexit 
 
+# generate
+echo "************************"
+echo "go generate"
+go generate
 
 # build on the native or default platform
+echo "************************"
 echo "building native platform"
 go build
 
 # test on the native or default platform
+echo "************************"
 echo "testing native platform"
 go test
 
@@ -25,6 +31,7 @@ go test
 
 GOX_BUILD_LOG="gox_build.log"
 date >> $GOX_BUILD_LOG
+echo "************************"
 echo "crosscompiling: gox -osarch=\"darwin/amd64\" -osarch=\"linux/amd64\""
 if ! gox -osarch="darwin/amd64" -osarch="linux/amd64" >> $GOX_BUILD_LOG 2>&1; then
     echo "FAILURE: gox command failed to build for deployment architecture"
