@@ -22,13 +22,11 @@ func init() {
 }
 
 func main() {
-	start := time.Now()
-	defer func(start time.Time) {
-		elapsed := time.Since(start)
-		log.Printf("Total elapsed time ~ %s", elapsed)
-	}(start)
+	log.Println(current_function(), "entering")
+	defer trace(current_function(), time.Now())
+
 	// var err error
-	log.Printf("Starting recmetrics (%v, v%v, build %v)", runtime.Version(), Version(), BuildNumber())
+	log.Printf("Starting webapptemplate (%v, v%v, build %v)", runtime.Version(), Version(), BuildNumber())
 	log.Printf("GOMAXPROCS (default:%d) (set to:%d)\n", runtime.GOMAXPROCS(runtime.NumCPU()), runtime.GOMAXPROCS(runtime.NumCPU()))
 
 	// command line flags:
