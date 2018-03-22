@@ -25,4 +25,8 @@ in github create the project then add the github origin and push to master.
     git remote add origin https://github.com/<USER>/<REPONAME>.git
     git push origin master
 
+
+## TODO
+
+- [ ] migrate from bindata to [packr](https://github.com/gobuffalo/packr)
     
