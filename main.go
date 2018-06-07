@@ -26,8 +26,9 @@ func main() {
 	defer trace(current_function(), time.Now())
 
 	// var err error
-	log.Printf("Starting webapptemplate (%v, v%v, build %v)", runtime.Version(), Version(), BuildNumber())
-	log.Printf("GOMAXPROCS (default:%d) (set to:%d)\n", runtime.GOMAXPROCS(runtime.NumCPU()), runtime.GOMAXPROCS(runtime.NumCPU()))
+	log.Printf("Starting %v (v%v, build %v, build date:%v)", os.Args[0], Version(), BuildNumber(), BuildDate())
+	log.Printf("os.Args: %v", os.Args)
+	log.Printf("Go (runtime:%v) (GOMAXPROCS:%d) (NumCPUs:%d)\n", runtime.Version(), runtime.GOMAXPROCS(-1), runtime.NumCPU())
 
 	// command line flags:
 	flag.Parse()
