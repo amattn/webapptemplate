@@ -5,7 +5,7 @@ import "time"
 const (
 	internal_BUILD_TIMESTAMP = 1500000000
 	internal_BUILD_NUMBER    = 0
-	internal_VERSION_STRING  = "2.0.0"
+	internal_VERSION_STRING  = "0.0.0"
 )
 
 func BuildDate() time.Time {
