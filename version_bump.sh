@@ -3,6 +3,7 @@
 set -o nounset
 set -o errexit
 
+
 VERSION_GO_FILENAME="version.go"
 
 usage(){
@@ -31,19 +32,20 @@ bump_build(){
   # cleanup
   go fmt version.go > /dev/null
 
-  FINAL_VERSION_STRING=$(grep -o "internal_VERSION_STRING\\s*=\\s\"[0-9]*\.[0-9]*\.[0-9]*\"\\+" $VERSION_GO_FILENAME | grep -o "[0-9]*\.[0-9]*\.[0-9]*")
+  FINAL_VERSION_STRING=$(grep -o "internal_VERSION_STRING\\s*=\\s\"[vV]*[0-9]*\.[0-9]*\.[0-9]*\"\\+" $VERSION_GO_FILENAME | grep -o "[0-9]*\.[0-9]*\.[0-9]*")
   echo "v${FINAL_VERSION_STRING}"
 }
 
 bump_version_string(){
   echo "Bumping ${POSITION} number, from ${XYZ_VERSION_STRING} to ${NEW_VERSION_STRING}"
-  sed -i.bak "s/internal_VERSION_STRING[[:space:]]*=[[:space:]]*\"[0-9]*\.[0-9]*\.[0-9]*\"/internal_VERSION_STRING\\ =\\ \"${NEW_VERSION_STRING}\"/g" $VERSION_GO_FILENAME
+  sed -i.bak "s/internal_VERSION_STRING[[:space:]]*=[[:space:]]*\"[vV]*[0-9]*\.[0-9]*\.[0-9]*\"/internal_VERSION_STRING\\ =\\ \"${NEW_VERSION_STRING}\"/g" $VERSION_GO_FILENAME
 
   bump_build
 }
 
 
 bump_patch(){
+  echo "patching"
   NEW_PATCH_NUM=$((PATCH_NUM+1))
   NEW_VERSION_STRING=${MAJOR_NUM}.${MINOR_NUM}.${NEW_PATCH_NUM}
   bump_version_string
@@ -75,12 +77,14 @@ then
   exit 1
 fi
 
+
 while [ "$1" != "" ]; do
+
   PARAM=`echo $1 | awk -F= '{print $1}'`
   VALUE=`echo $1 | awk -F= '{print $2}'`
 
   # should be of form x.y.z
-  XYZ_VERSION_STRING=$(grep -o "internal_VERSION_STRING\\s*=\\s\"[0-9]*\.[0-9]*\.[0-9]*\"\\+" $VERSION_GO_FILENAME | grep -o "[0-9]*\.[0-9]*\.[0-9]*")
+  XYZ_VERSION_STRING=$(grep -o "internal_VERSION_STRING\\s*=\\s\"[vV]*[0-9]*\.[0-9]*\.[0-9]*\"\\+" $VERSION_GO_FILENAME | grep -o "[0-9]*\.[0-9]*\.[0-9]*")
 
   MAJOR_NUM=$(echo "$XYZ_VERSION_STRING" | cut -d '.' -f 1)
   MINOR_NUM=$(echo "$XYZ_VERSION_STRING" | cut -d '.' -f 2)
@@ -117,7 +121,4 @@ while [ "$1" != "" ]; do
   esac
   shift
 done
-
-
-
 
