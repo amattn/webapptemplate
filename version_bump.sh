@@ -1,8 +1,14 @@
 #!/bin/sh
 
+# Last edit 2018-08-17
+
 set -o nounset
 set -o errexit
 
+# you can add the following lines to .git/hooks/pre-commit to auto bump build num:
+#
+# ./version_bump.sh
+# git add version.go
 
 VERSION_GO_FILENAME="version.go"
 
@@ -53,13 +59,16 @@ bump_patch(){
 
 bump_minor(){
   NEW_MINOR_NUM=$((MINOR_NUM+1))
-  NEW_VERSION_STRING=${MAJOR_NUM}.${NEW_MINOR_NUM}.${PATCH_NUM}
+  NEW_PATCH_NUM="0"
+  NEW_VERSION_STRING=${MAJOR_NUM}.${NEW_MINOR_NUM}.${NEW_PATCH_NUM}
   bump_version_string
 }
 
 bump_major(){
   NEW_MAJOR_NUM=$((MAJOR_NUM+1))
-  NEW_VERSION_STRING=${NEW_MAJOR_NUM}.${MINOR_NUM}.${PATCH_NUM}
+  NEW_MINOR_NUM="0"
+  NEW_PATCH_NUM="0"
+  NEW_VERSION_STRING=${NEW_MAJOR_NUM}.${NEW_MINOR_NUM}.${NEW_PATCH_NUM}
   bump_version_string
 }
 
@@ -121,4 +130,7 @@ while [ "$1" != "" ]; do
   esac
   shift
 done
+
+
+
 

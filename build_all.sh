@@ -3,20 +3,28 @@
 # if one of our commands returns an error, stop execution of this script
 set -o errexit 
 
+COMPONENT="popoffs"
+GO_COMMAND="go"
+# GO_COMMAND="vgo"
+
 # generate
 echo "************************"
-echo "go generate"
-go generate
+echo "$GO_COMMAND generate"
+$GO_COMMAND generate
 
 # build on the native or default platform
 echo "************************"
 echo "building native platform"
-go build
+$GO_COMMAND build
+
+echo "************************"
+echo "vetting native platform"
+$GO_COMMAND vet
 
 # test on the native or default platform
 echo "************************"
 echo "testing native platform"
-go test
+$GO_COMMAND test
 
 # I like gox as a cross compilation tool: https://github.com/mitchellh/gox
 # install with:
@@ -28,6 +36,8 @@ go test
 # also, in the normal case, most of the output of gox is redundant with
 # the output from go build above, so in the normal case, we just 
 # redirect to a build log
+
+# currently gox doesn't seem to support vgo...
 
 GOX_BUILD_LOG="gox_build.log"
 date >> $GOX_BUILD_LOG

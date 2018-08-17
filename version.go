@@ -1,6 +1,10 @@
 package main
 
-import "time"
+import (
+	"fmt"
+	"log"
+	"time"
+)
 
 const (
 	internal_BUILD_TIMESTAMP = 1500000000
@@ -16,4 +20,12 @@ func BuildNumber() int64 {
 }
 func Version() string {
 	return internal_VERSION_STRING
+}
+
+func VersionInfo() string {
+	return fmt.Sprintf("hop (%v, build %v, build date:%v)", Version(), BuildNumber(), BuildDate())
+}
+
+func LogVersionInfo() {
+	log.Printf(VersionInfo())
 }
