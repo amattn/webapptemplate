@@ -1,6 +1,6 @@
 #!/bin/sh
 
-# Last edit 2018-08-17
+# Last edit 2018-08-27
 
 set -o nounset
 set -o errexit
@@ -72,6 +72,15 @@ bump_major(){
   bump_version_string
 }
 
+tag(){
+  FINAL_VERSION_STRING=$(grep -o "internal_VERSION_STRING\\s*=\\s\"[vV]*[0-9]*\.[0-9]*\.[0-9]*\"\\+" $VERSION_GO_FILENAME | grep -o "[0-9]*\.[0-9]*\.[0-9]*")
+  git add version.go
+  git commit -m "tagging version v$FINAL_VERSION_STRING"
+  git tag v$FINAL_VERSION_STRING
+
+  echo "use the following command to push tag to origin:"
+  echo "git push && git push --tags"
+}
 
 
 
@@ -120,6 +129,10 @@ while [ "$1" != "" ]; do
         ;;
       major)
         bump_major
+        exit 0
+        ;;
+      tag)
+        tag
         exit 0
         ;;
       *)
