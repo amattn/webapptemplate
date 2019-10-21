@@ -9,6 +9,8 @@ import (
 	"os"
 	"runtime"
 	"time"
+
+	"github.com/amattn/deeperror"
 )
 
 var show_h bool
@@ -44,7 +46,9 @@ func main() {
 
 	host_and_port := ":8080"
 	log.Println("Starting HTTP server at", "\nhttp://"+host_and_port)
-	log.Fatal(http.ListenAndServe(host_and_port, getHandler()))
+	err := http.ListenAndServe(host_and_port, getHandler())
+
+	deeperror.Fatal(4074108258, "ListenAndServe returned error", err)
 }
 
 func getHandler() *http.ServeMux {
