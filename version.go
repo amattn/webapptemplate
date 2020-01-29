@@ -7,23 +7,24 @@ import (
 )
 
 const (
-	internal_BUILD_TIMESTAMP = 1500000000
-	internal_BUILD_NUMBER    = 0
-	internal_VERSION_STRING  = "0.0.0"
+	internalIdentifier = "webapptemplate"
+	internalBuildTimestamp = 1500000000
+	internalBuildNumber    = 0
+	internalVersionString  = "0.0.0"
 )
 
 func BuildDate() time.Time {
-	return time.Unix(internal_BUILD_TIMESTAMP, 0)
+	return time.Unix(internalBuildTimestamp, 0)
 }
 func BuildNumber() int64 {
-	return internal_BUILD_NUMBER
+	return internalBuildNumber
 }
 func Version() string {
-	return internal_VERSION_STRING
+	return internalVersionString
 }
 
 func VersionInfo() string {
-	return fmt.Sprintf("hop (%v, build %v, build date:%v)", Version(), BuildNumber(), BuildDate())
+	return fmt.Sprintf("%s (%v, build %v, build date:%v)", internalIdentifier, Version(), BuildNumber(), BuildDate())
 }
 
 func LogVersionInfo() {

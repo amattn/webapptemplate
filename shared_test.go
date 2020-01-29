@@ -7,10 +7,12 @@ import (
 	"testing"
 )
 
-var test_server *httptest.Server
+var (
+	globalTestServer *httptest.Server
+)
 
 func init() {
-	test_server = httptest.NewServer(getHandler())
+	globalTestServer = httptest.NewServer(getHandler())
 }
 
 func assertEqual(t *testing.T, expected, candidate interface{}, printargs ...interface{}) {

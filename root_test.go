@@ -7,10 +7,10 @@ import (
 )
 
 func TestRoot(t *testing.T) {
-	res, err := http.Get(test_server.URL)
+	res, err := http.Get(globalTestServer.URL)
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	assertEqual(t, 200, res.StatusCode, test_server.URL)
+	assertEqual(t, 200, res.StatusCode, globalTestServer.URL)
 }

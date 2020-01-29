@@ -1,6 +1,6 @@
 #!/bin/sh
 
-# Last edit 2018-08-27
+# Last edit 2020-01-24
 
 set -o nounset
 set -o errexit
@@ -21,30 +21,30 @@ usage(){
 }
 
 bump_build(){
-  CURRENT_BUILD_NUM=$(grep -o "internal_BUILD_NUMBER\\s*=\\s*[0-9]\\+" $VERSION_GO_FILENAME | grep -o "[0-9]\\+")
+  CURRENT_BUILD_NUM=$(grep -o "internalBuildNumber\\s*=\\s*[0-9]\\+" $VERSION_GO_FILENAME | grep -o "[0-9]\\+")
   NEW_NUM=$((CURRENT_BUILD_NUM+1))
   echo "Bumping build number, from ${CURRENT_BUILD_NUM} to $NEW_NUM"
 
-  sed -i.bak "s/internal_BUILD_NUMBER[[:space:]]*=[[:space:]]*[0-9]*/internal_BUILD_NUMBER\\ =\\ ${NEW_NUM}/g" $VERSION_GO_FILENAME
+  sed -i.bak "s/internalBuildNumber[[:space:]]*=[[:space:]]*[0-9]*/internalBuildNumber\\ =\\ ${NEW_NUM}/g" $VERSION_GO_FILENAME
 
 
   NEW_TS=$(date +%s)
   echo "Bumping build timestamp new=$NEW_TS"
 
-  sed -i.bak "s/internal_BUILD_TIMESTAMP[[:space:]]*=[[:space:]]*[0-9][0-9]*/internal_BUILD_TIMESTAMP\\ =\\ ${NEW_TS}/g" $VERSION_GO_FILENAME
+  sed -i.bak "s/internalBuildTimestamp[[:space:]]*=[[:space:]]*[0-9][0-9]*/internalBuildTimestamp\\ =\\ ${NEW_TS}/g" $VERSION_GO_FILENAME
 
   rm -f version.go.bak
   
   # cleanup
   go fmt version.go > /dev/null
 
-  FINAL_VERSION_STRING=$(grep -o "internal_VERSION_STRING\\s*=\\s\"[vV]*[0-9]*\.[0-9]*\.[0-9]*\"\\+" $VERSION_GO_FILENAME | grep -o "[0-9]*\.[0-9]*\.[0-9]*")
+  FINAL_VERSION_STRING=$(grep -o "internalVersionString\\s*=\\s\"[vV]*[0-9]*\.[0-9]*\.[0-9]*\"\\+" $VERSION_GO_FILENAME | grep -o "[0-9]*\.[0-9]*\.[0-9]*")
   echo "v${FINAL_VERSION_STRING}"
 }
 
 bump_version_string(){
   echo "Bumping ${POSITION} number, from ${XYZ_VERSION_STRING} to ${NEW_VERSION_STRING}"
-  sed -i.bak "s/internal_VERSION_STRING[[:space:]]*=[[:space:]]*\"[vV]*[0-9]*\.[0-9]*\.[0-9]*\"/internal_VERSION_STRING\\ =\\ \"${NEW_VERSION_STRING}\"/g" $VERSION_GO_FILENAME
+  sed -i.bak "s/internalVersionString[[:space:]]*=[[:space:]]*\"[vV]*[0-9]*\.[0-9]*\.[0-9]*\"/internalVersionString\\ =\\ \"${NEW_VERSION_STRING}\"/g" $VERSION_GO_FILENAME
 
   bump_build
 }
@@ -73,7 +73,7 @@ bump_major(){
 }
 
 tag(){
-  FINAL_VERSION_STRING=$(grep -o "internal_VERSION_STRING\\s*=\\s\"[vV]*[0-9]*\.[0-9]*\.[0-9]*\"\\+" $VERSION_GO_FILENAME | grep -o "[0-9]*\.[0-9]*\.[0-9]*")
+  FINAL_VERSION_STRING=$(grep -o "internalVersionString\\s*=\\s\"[vV]*[0-9]*\.[0-9]*\.[0-9]*\"\\+" $VERSION_GO_FILENAME | grep -o "[0-9]*\.[0-9]*\.[0-9]*")
   git add version.go
   git commit -m "tagging version v$FINAL_VERSION_STRING"
   git tag v$FINAL_VERSION_STRING
@@ -102,7 +102,7 @@ while [ "$1" != "" ]; do
   VALUE=`echo $1 | awk -F= '{print $2}'`
 
   # should be of form x.y.z
-  XYZ_VERSION_STRING=$(grep -o "internal_VERSION_STRING\\s*=\\s\"[vV]*[0-9]*\.[0-9]*\.[0-9]*\"\\+" $VERSION_GO_FILENAME | grep -o "[0-9]*\.[0-9]*\.[0-9]*")
+  XYZ_VERSION_STRING=$(grep -o "internalVersionString\\s*=\\s\"[vV]*[0-9]*\.[0-9]*\.[0-9]*\"\\+" $VERSION_GO_FILENAME | grep -o "[0-9]*\.[0-9]*\.[0-9]*")
 
   MAJOR_NUM=$(echo "$XYZ_VERSION_STRING" | cut -d '.' -f 1)
   MINOR_NUM=$(echo "$XYZ_VERSION_STRING" | cut -d '.' -f 2)
