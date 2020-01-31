@@ -1,0 +1,14 @@
+<div class="content">
+    <h3>Oops. Something has gone wrong.</h3>
+    <p>
+        We were unable to successfully complete this request.  Please try again later.
+    </p>
+    {{ if .SomethingWentWrong }}
+        <p>
+            {{ .SomethingWentWrong.String }}
+        </p>
+    {{ end }}
+    <p>
+        {{ index .Data "SupplementalInfo"}}
+    </p>
+</div>

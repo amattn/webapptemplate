@@ -1,0 +1,14 @@
+<div class="content">
+    <h3>404: Sorry, we couldn't find that page</h3>
+    <p>
+    </p>
+    {{ if .SomethingWentWrong }}
+        <p>
+            {{ .SomethingWentWrong.String }}
+        </p>
+    {{ end }}
+    <p>
+        {{ index .Data "SupplementalInfo"}}
+    </p>
+
+</div>

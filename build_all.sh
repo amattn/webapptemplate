@@ -3,12 +3,16 @@
 # if one of our commands returns an error, stop execution of this script
 set -o errexit 
 
-COMPONENT="popoffs"
+COMPONENT="webapptemplate"
 GO_COMMAND="go"
 # GO_COMMAND="vgo"
 
 # generate
 echo "************************"
+
+echo "statics init"
+rm generated_assets.go
+statics -i=assets -o=generated_assets.go -pkg=main -group=Assets -ignore=\\.gitignore\|.DS_Store -prefix=assets -init=true
 echo "$GO_COMMAND generate"
 $GO_COMMAND generate
 

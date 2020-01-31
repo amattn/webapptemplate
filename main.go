@@ -2,8 +2,6 @@ package main
 
 import (
 	"flag"
-	"fmt"
-	"html"
 	"log"
 	"net/http"
 	"os"
@@ -22,6 +20,10 @@ func init() {
 	flag.BoolVar(&showHelp, "help", false, "show help message and exit(0)")
 	flag.BoolVar(&showVersion, "version", false, "show version info and exit(0)")
 }
+
+const (
+	DefaultSessionKey = "PLLKCi6Eq0m5J4t4z6z356mTsh3VD4xcKRoOpIX4LzcQY792"
+)
 
 func main() {
 	log.Println(currentFunction(), "entering")
@@ -44,32 +46,17 @@ func main() {
 		os.Exit(0)
 	}
 
+	path := "/assets"
+	am, err := NewAssetManager(path)
+	if err != nil {
+		derr := deeperror.New(4147351464, currentFunction()+" Failure: NewAssetManager", err)
+		derr.AddDebugField("path", path)
+		log.Fatal(derr)
+	}
+
 	hostAndPort := ":8080"
 	log.Println("Starting HTTP server at", "\nhttp://"+hostAndPort)
-	err := http.ListenAndServe(hostAndPort, getHandler())
+	err = http.ListenAndServe(hostAndPort, GetRouter(am, DefaultSessionKey))
 
 	deeperror.Fatal(4074108258, "ListenAndServe returned error", err)
-}
-
-func getHandler() *http.ServeMux {
-	serveMux := http.NewServeMux()
-	// setup our handler
-	serveMux.HandleFunc("/bar", func(w http.ResponseWriter, r *http.Request) {
-		_, _ = fmt.Fprintf(w, "Hello, %q", html.EscapeString(r.URL.Path))
-	})
-	serveMux.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
-		if r.URL.Path != "/" {
-			custom404Handler(w, r)
-			return
-		}
-
-		_, _ = fmt.Fprintf(w, "root!")
-	})
-
-	return serveMux
-}
-
-func custom404Handler(w http.ResponseWriter, r *http.Request) {
-	w.WriteHeader(http.StatusNotFound)
-	_, _ = fmt.Fprintf(w, "404 Not Found, %v", html.EscapeString(r.URL.Path))
 }
