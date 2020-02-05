@@ -13,11 +13,15 @@ set -o errexit
 VERSION_GO_FILENAME="version.go"
 
 usage(){
-  echo "Usage: $0 major|minor|patch|build"
+  echo "Usage: $0 precommit|major|minor|patch|build|tag"
   echo "  $0 build (just update buildnum, default)"
   echo "  $0 patch (1.0.PATCH)"
   echo "  $0 minor (1.MINOR.0)"
   echo "  $0 major (MAJOR.0.0)"
+  echo "  $0 tag (git tag with the X.Y.Z version number)"
+  echo "  $0 precommit (append the following lines to .git/hooks/pre-commit)"
+  echo "               ./version_bump.sh"
+  echo "               git add version.go"
 }
 
 bump_build(){
@@ -34,7 +38,7 @@ bump_build(){
   sed -i.bak "s/internalBuildTimestamp[[:space:]]*=[[:space:]]*[0-9][0-9]*/internalBuildTimestamp\\ =\\ ${NEW_TS}/g" $VERSION_GO_FILENAME
 
   rm -f version.go.bak
-  
+
   # cleanup
   go fmt version.go > /dev/null
 
@@ -82,6 +86,18 @@ tag(){
   echo "git push && git push --tags"
 }
 
+precommit(){
+  #TODO need to check if these lines already exist in the file
+  {
+    echo "#!/bin/sh"
+    echo ""
+    echo '# automatically bump build number on commit'
+    echo './version_bump.sh'
+    echo 'git add version.go'
+  } >> .git/hooks/pre-commit
+
+  chmod +x .git/hooks/pre-commit
+}
 
 
 if [ $# -eq 0 ]
@@ -133,6 +149,10 @@ while [ "$1" != "" ]; do
         ;;
       tag)
         tag
+        exit 0
+        ;;
+      precommit)
+        precommit
         exit 0
         ;;
       *)
