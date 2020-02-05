@@ -7,8 +7,8 @@ import (
 )
 
 const (
-	internalIdentifier = "webapptemplate"
-	internalBuildTimestamp = 1500000000
+	internalIdentifier     = "webapptemplate"
+	internalBuildTimestamp = 1580925140
 	internalBuildNumber    = 0
 	internalVersionString  = "0.0.0"
 )

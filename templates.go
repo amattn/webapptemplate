@@ -4,9 +4,11 @@ import (
 	"bytes"
 	"fmt"
 	"html/template"
+	"io/ioutil"
 	"log"
 	"net/http"
 	"net/url"
+	"os"
 	"sync"
 	"time"
 
@@ -57,7 +59,6 @@ func (assetManager *AssetManager) LoadAssetString(path AssetPath) (string, error
 	}
 
 	return string(file_bytes), nil
-
 }
 
 func ProcessContentTemplate(assetManager *AssetManager, templatePath AssetPath, data ContentData) (*bytes.Buffer, error) {
@@ -132,9 +133,17 @@ func loadAndExecuteTemplate(assetManager *AssetManager, assetName AssetPath, dat
 	return buff, nil
 }
 
-func loadTemplate(assetManager *AssetManager, assetName AssetPath) (*template.Template, error) {
-	// first check cache
-	maybeTmpl, exists := assetManager.TemplateCache.Load(assetName)
+func loadTemplate(assetManager *AssetManager, assetPath AssetPath) (*template.Template, error) {
+
+	// first check local filesystem to see if the file on disk is newer than the embedded version
+	fileSystemAssetIsNewer := isFileSystemAssetNewer(assetManager, assetPath)
+	if fileSystemAssetIsNewer {
+		// blow away cache:
+		assetManager.TemplateCache.Delete(assetPath)
+	}
+
+	// second, check cache
+	maybeTmpl, exists := assetManager.TemplateCache.Load(assetPath)
 	if exists {
 		tmpl, ok := maybeTmpl.(*template.Template)
 		if ok {
@@ -142,8 +151,8 @@ func loadTemplate(assetManager *AssetManager, assetName AssetPath) (*template.Te
 		} else {
 			// tmpl is something else
 			derr := deeperror.New(1003944010, "unexpected type tmpl is ", nil)
+			derr.AddDebugField("assetName", assetPath)
 			derr.AddDebugField("assetManager", assetManager)
-			derr.AddDebugField("assetName", assetName)
 			derr.AddDebugField("type", fmt.Sprintf("%T", tmpl))
 			return nil, derr
 		}
@@ -155,40 +164,81 @@ func loadTemplate(assetManager *AssetManager, assetName AssetPath) (*template.Te
 		"shortTimeHour": shortTimeHour,
 	}
 
-	// so our desired template doesn't exist...  let's make it.
-	raw, err := loadAsset(assetManager, assetName)
+	// so our desired template asset doesn't seem to exist in the cache...  let's make it.
+	raw, err := loadAsset(assetManager, assetPath)
 	if err != nil {
 		derr := deeperror.New(2316963673, "", err)
 		derr.AddDebugField("assetBox", assetManager)
-		derr.AddDebugField("assetName", assetName)
+		derr.AddDebugField("assetName", assetPath)
 		return nil, derr
 	}
 
-	tmpl, err := template.New(string(assetName)).Funcs(helperFuncMap).Parse(raw)
+	// create, prepare and parse the template
+	tmpl, err := template.New(string(assetPath)).Funcs(helperFuncMap).Parse(raw)
 	if err != nil {
 		derr := deeperror.New(2316963674, "Failure Parsing Template", err)
 		derr.AddDebugField("assetManager", assetManager)
-		derr.AddDebugField("assetName", assetName)
+		derr.AddDebugField("assetName", assetPath)
 		return nil, derr
 	}
 
-	assetManager.TemplateCache.Store(assetName, tmpl)
+	// store it in the cache
+	assetManager.TemplateCache.Store(assetPath, tmpl)
 	return tmpl, err
 
 }
 
-// load the asset from whatever asset package you are using
-func loadAsset(assetManager *AssetManager, assetName AssetPath) (string, error) {
+func isFileSystemAssetNewer(assetManager *AssetManager, assetPath AssetPath) bool {
+	fileSystemAssetIsNewer := false
 
-	raw, err := assetManager.LoadAssetString(assetName)
+	// first check local filesystem to see if the file on disk is newer than the embedded version
+	fileStat, err := os.Stat(FileSystemAssetDir + string(assetPath))
+
+	if err != nil {
+		// ignore errors here.  likely just means the file doesn't exists in the FS.
+	} else {
+		if fileStat.ModTime().After(BuildDate()) {
+			fileSystemAssetIsNewer = true
+		}
+	}
+
+	return fileSystemAssetIsNewer
+}
+
+// load the asset from whatever asset package you are using
+func loadAsset(assetManager *AssetManager, assetPath AssetPath) (string, error) {
+
+	fileSystemAssetIsNewer := isFileSystemAssetNewer(assetManager, assetPath)
+
+	if fileSystemAssetIsNewer {
+		return loadFileSystemAsset(assetManager, assetPath)
+	} else {
+		return loadEmbeddedAsset(assetManager, assetPath)
+	}
+}
+
+func loadEmbeddedAsset(assetManager *AssetManager, assetPath AssetPath) (string, error) {
+	raw, err := assetManager.LoadAssetString(assetPath)
 	if err != nil {
 		derr := deeperror.New(809174294, "", err)
+		derr.AddDebugField("assetName", assetPath)
 		derr.AddDebugField("assetManager", assetManager)
-		derr.AddDebugField("assetName", assetName)
 		return "", derr
 	}
 
 	return raw, nil
+}
+
+func loadFileSystemAsset(assetManager *AssetManager, assetPath AssetPath) (string, error) {
+	fileBytes, err := ioutil.ReadFile(FileSystemAssetDir + string(assetPath))
+	if err != nil {
+		derr := deeperror.New(598610087, currentFunction()+" Failure: ReadFile:", err)
+		derr.AddDebugField("assetName", assetPath)
+		derr.AddDebugField("assetManager", assetManager)
+		return "", derr
+	}
+
+	return string(fileBytes), nil
 }
 
 // #     #

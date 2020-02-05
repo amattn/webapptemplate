@@ -1,6 +1,9 @@
 package main
 
 // template assets
+
+const FileSystemAssetDir = "assets/"
+
 const (
 	// TODO 1092387750 write a generate to set this
 
