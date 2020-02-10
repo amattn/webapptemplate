@@ -7,6 +7,9 @@ gox_build.log
 
 generated_assets.go
 
+# code coverage output
+count.out
+
 # Compiled Object files, Static and Dynamic libs (Shared Objects)
 
 *.o

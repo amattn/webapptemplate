@@ -32,10 +32,26 @@ func init() {
 	log.Println(2683175791)
 }
 
-func assertEqual(t *testing.T, expected, candidate interface{}, printargs ...interface{}) {
+func assertEqual(t *testing.T, debugNum int64, expected, candidate interface{}, printArgs ...interface{}) {
+	if expected == nil {
+		if candidate != nil {
+			extra := fmt.Sprintln(printArgs...)
+			t.Errorf("%d Expected != Candidate, Candidate should be nil\n%s\nExpected (%T):\n%+v\nCandidate (%T):\n%+v", debugNum, extra, expected, expected, candidate, candidate)
+			return
+		}
+	}
+
 	isDeeplyEqual := reflect.DeepEqual(expected, candidate)
 	if isDeeplyEqual == false {
-		extra := fmt.Sprintln(printargs...)
-		t.Errorf("Expected != Candidate\n%s\nExpected:\n%+v\nCandidate:\n%+v", extra, expected, candidate)
+		extra := fmt.Sprintln(printArgs...)
+		t.Errorf("%d Expected != Candidate\n%s\nExpected (%T):\n%+v\nCandidate (%T):\n%+v", debugNum, extra, expected, expected, candidate, candidate)
+	}
+}
+
+func assertNotEqual(t *testing.T, debugNum int64, expected, candidate interface{}, printArgs ...interface{}) {
+	isDeeplyEqual := reflect.DeepEqual(expected, candidate)
+	if isDeeplyEqual == true {
+		extra := fmt.Sprintln(printArgs...)
+		t.Errorf("%d Expected == Candidate but we want !=\n%s\nExpected (%T):\n%+v\nCandidate (%T):\n%+v", debugNum, extra, expected, expected, candidate, candidate)
 	}
 }

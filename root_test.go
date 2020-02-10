@@ -13,7 +13,7 @@ func TestRoot(t *testing.T) {
 		log.Fatal(err)
 	}
 
-	assertEqual(t, 200, res.StatusCode, globalTestServer.URL)
+	assertEqual(t, 3246726949, 200, res.StatusCode, globalTestServer.URL)
 }
 
 func Test404(t *testing.T) {
@@ -23,7 +23,7 @@ func Test404(t *testing.T) {
 		log.Fatal(err)
 	}
 
-	assertEqual(t, 404, res.StatusCode, globalTestServer.URL)
+	assertEqual(t, 1177791974, 404, res.StatusCode, globalTestServer.URL)
 }
 
 func Test5XX(t *testing.T) {
@@ -33,5 +33,5 @@ func Test5XX(t *testing.T) {
 		log.Fatal(err)
 	}
 
-	assertEqual(t, 500, res.StatusCode, globalTestServer.URL)
+	assertEqual(t, 2774240274, 500, res.StatusCode, globalTestServer.URL)
 }

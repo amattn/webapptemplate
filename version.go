@@ -2,15 +2,14 @@ package main
 
 import (
 	"fmt"
-	"log"
 	"time"
 )
 
 const (
-	internalIdentifier     = "webapptemplate"
-	internalBuildTimestamp = 1580925140
-	internalBuildNumber    = 0
-	internalVersionString  = "0.0.0"
+	internalIdentifier           = "rootstrap"
+	internalBuildTimestamp int64 = 1581275458
+	internalBuildNumber    int64 = 10
+	internalVersionString        = "0.0.1"
 )
 
 func BuildDate() time.Time {
@@ -25,8 +24,4 @@ func Version() string {
 
 func VersionInfo() string {
 	return fmt.Sprintf("%s (%v, build %v, build date:%v)", internalIdentifier, Version(), BuildNumber(), BuildDate())
-}
-
-func LogVersionInfo() {
-	log.Printf(VersionInfo())
 }
